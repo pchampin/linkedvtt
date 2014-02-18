@@ -1,0 +1,19 @@
+{
+  "@context": {
+      "tags": "http://commontag.org/ns#label",
+      "semanticTags": {
+          "@id": "http://commontag.org/ns#means",
+          "@type": "@id"
+      },
+      "contributors": {
+          "@id": "http://www.w3.org/ns/ma-ont#hasContributor",
+          "@type": "@id"
+      },
+      "actors": {
+          "@id": "http://www.w3.org/ns/ma-ont#features",
+          "@type": "@id"
+      },
+      "summary": "http://www.w3.org/ns/ma-ont#description",
+      "namedGraph": "@graph"
+  }
+}

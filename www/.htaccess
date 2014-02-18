@@ -1,0 +1,10 @@
+Options ExecCGI
+DirectoryIndex index.html
+
+<Files onto>
+  SetHandler wsgi-script
+</Files>
+
+<Files process>
+  SetHandler wsgi-script
+</Files>

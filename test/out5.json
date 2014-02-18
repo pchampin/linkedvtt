@@ -1,0 +1,30 @@
+{
+    "webvtt-head": "",
+    "metadata": {},
+    "cues": [
+        {
+            "timestamp1": [ 0, 0, 0, 0 ],
+            "timestamp2": [ 0, 0, 2, 0 ],
+            "settings": {},
+            "payload": "<v.first.loud Esme>It's a blue apple tree!"
+        },
+        {
+            "timestamp1": [ 0, 0, 2, 0 ],
+            "timestamp2": [ 0, 0, 4, 0 ],
+            "settings": {},
+            "payload": "<v Mary>No way!"
+        },
+        {
+            "timestamp1": [ 0, 0, 4, 0 ],
+            "timestamp2": [ 0, 0, 6, 0 ],
+            "settings": {},
+            "payload": "<v Esme>Hee!</v> <i>laughter</i>"
+        },
+        {
+            "timestamp1": [ 0, 0, 6, 0 ],
+            "timestamp2": [ 0, 0, 8, 0 ],
+            "settings": {},
+            "payload": "<v.loud Mary>That's awesome!"
+        }
+    ]
+}

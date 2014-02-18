@@ -1,0 +1,19 @@
+{
+    "webvtt-head": "",
+    "metadata": {},
+    "cues": [
+        {
+            "timestamp1": [ 0, 0, 0, 0 ],
+            "timestamp2": [ 0, 0, 2, 0 ],
+            "settings": {},
+            "payload": "That's an, an, that's an L!"
+        },
+        {
+            "id": "transcription-credit",
+            "timestamp1": [ 0, 0, 4, 0 ],
+            "timestamp2": [ 0, 0, 5, 0 ],
+            "settings": {},
+            "payload": "Transcribed by Celestials™"
+        }
+    ]
+}

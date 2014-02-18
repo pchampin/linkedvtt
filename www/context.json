@@ -1,0 +1,20 @@
+{
+    "@context": {
+        "vtt": "http://champin.net/2014/linkedvtt/onto#",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        
+        "Region": "vtt:regionMetadata",
+        "vertical": "vtt:vertical",
+        "line": "vtt:line",
+        "size": "vtt:size",
+        "position": "vtt:position",
+        "align": "vtt:align",
+        "region": "vtt:region",
+
+        "VideoAnnotationDataset": "vtt:VideoAnnotationDataset",
+        "cues": "vtt:hasCue",
+        "fragment": "vtt:describesFragment",
+        "annotation": "vtt:annotedBy"
+    }
+}

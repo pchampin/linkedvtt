@@ -1,0 +1,36 @@
+{
+    "webvtt-head": "",
+    "metadata": {},
+    "cues": [
+        {
+            "timestamp1": [ 0, 0, 0, 0 ],
+            "timestamp2": [ 0, 0, 4, 0 ],
+            "settings": {
+                "position": ["10%,start"],
+                "align" : ["start"],
+                "size": ["35%"]
+            },
+            "payload": "Where did he go?"
+        },
+        {
+            "timestamp1": [ 0, 0, 3, 0 ],
+            "timestamp2": [ 0, 0, 6, 500 ],
+            "settings": {
+                "position": ["90%"],
+                "align" : ["end"],
+                "size": ["35%"]
+            },
+            "payload": "I think he went down this lane."
+        },
+        {
+            "timestamp1": [ 0, 0, 4, 0 ],
+            "timestamp2": [ 0, 0, 6, 500 ],
+            "settings": {
+                "position": ["45%,end"],
+                "align" : ["middle"],
+                "size": ["35%"]
+            },
+            "payload": "What are you waiting for?"
+        }
+    ]
+}

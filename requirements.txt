@@ -1,0 +1,3 @@
+PyLD==0.4.10
+# for testing only
+# nose==1.3.0

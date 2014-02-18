@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Web-VTT as linked data ontology</title>
+  <meta charset="utf-8"/>
+  <meta name="author" content="Pierre-Antoine Champin" />
+  <style type="text/css" ="currentStyle">
+    /* @import url("style.css"); */
+    h2 {
+        margin-top: 2em;
+    }
+  </style>
+ </head>
+
+ <body>
+  <h1>Web-VTT as linked data ontology</h1>
+  <p>This is a quick-and-dirty HTML representation of an ontology
+    representing Web-VTT concepts as linked data.</p>
+  <p>This ontology is available at :</p>
+  <table>
+    <tr>
+      <td><a href="onto">http://champin.net/2014/linkedvtt/onto</a></td>
+      <td>the abstract IRI identifying this ontology</td>
+    </tr>
+    <tr>
+      <td><a href="onto.html">http://champin.net/2014/linkedvtt/onto.html</a></td>
+      <td>this page, a human-readable description of the ontology</td>
+    </tr>
+    <tr>
+      <td><a href="onto.rdf">http://champin.net/2014/linkedvtt/onto.rdf</a></td>
+      <td>the RDF/XML representation of the ontology</td>
+    </tr>
+    <tr>
+      <td><a href="onto.ttl">http://champin.net/2014/linkedvtt/onto.ttl</a></td>
+      <td>the Turtle representation of the ontology</td>
+    </tr>
+  </table>
+
+  <h2>Classes</h2>
+
+  <h3 id="VideoAnnotationDataset">VideoAnnotationDataset</h3>
+  <p>Instances of the classes are RDF datasets representing the information
+    conveyed by Web-VTT files.</p>
+
+  <h3 id="Cue">Cue</h3>
+  <p>Instances of the classes are Cues
+    as defined by the Web-VTT specification.
+    Cues with an identifier have an IRI based on that identifier,
+    while cues without any identifiers are represented by blank nodes.
+  </p>
+
+  <h2>Properties</h2>
+
+  <h3 id="hasCue">hasCue</h3>
+  <p>This property links
+    a <a href="#VideoAnnotationDataset">video annotation dataset</a>
+    to all the <a href="#Cue">cues</a>
+    it defines.</p>
+
+  <h3 id="describesFragment">describesFragment</h3>
+  <p>This property links an instance of <a href="#Cue">cue</a>
+    to the media fragment it describes.</p>
+
+  <h3 id="annotatedBy">describesFragment</h3>
+  <p>This property links a Media fragment
+    to the payload of a cue describing it.</p>
+
+  <h2>Web-VTT inherited properties</h2>
+  <p>Those properties are straighforward translation of metadata and settings
+    defined by the Web-VTT specification</p>
+
+  <h3>Metadata</h3>
+  <ul>
+    <li id="regionMetadata">regionMetadata</li>
+  </ul>
+
+  <h3>Settings</h3>
+  <ul>
+    <li id="vertical">vertical</li>
+    <li id="line">line</li>
+    <li id="size">size</li>
+    <li id="position">position</li>
+    <li id="align">align</li>
+    <li id="region">region</li>
+  </ul>
+
+ </body>
+</html>

@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+
+from os.path import dirname
+from sys import path
+path.append(dirname(__file__))
+
+from cgi import FieldStorage
+from urllib2 import urlopen
+from urlparse import parse_qs, urlparse
+
+from linkedvtt import webvtt2jsonld
+from webvtt import parse
+
+def get_ctype(oformat, flat, forcetxt):
+    if forcetxt:
+        return "text/plain;charset=utf-8"
+    else:
+        if oformat == "jsonld":
+            return "application/ld+json"
+        else:
+            if flat:
+                return "application/ntriples"
+            else:
+                return "application/n-quads"
+
+def yt2vtt(ytiri):
+    """Convert a Youtube IRI into the corresponding WebVTT IRI"""
+    parsed = urlparse(ytiri)
+    params = parse_qs(parsed.query)
+    ytid = params.get("v", ("",))[0]
+    lang = params.get("lang", ("en",))[0]
+    return "http://video.google.com/timedtext?v=%s&lang=%s&format=vtt" \
+        % (ytid, lang)
+        
+
+def application(environ, start_response):
+    form = FieldStorage(fp=environ['wsgi.input'], environ=environ)
+    inputselect = form.getvalue("inputselect", "iri")
+    contexts = [ i for i in form.getvalue("context", "").split(" ") if i ]
+
+    if inputselect == "iri":     
+        video = form.getvalue("video", "http://ex.org/video")
+        iri  = form.getvalue("iriinput")
+        webvtt = urlopen(iri)
+        base = iri
+    elif inputselect == "yt":     
+        video  = form.getvalue("iriinput")
+        iri = yt2vtt(video)
+        webvtt = urlopen(iri)
+        base = iri
+    else: # inputselect == 'text'
+        video = form.getvalue("video", "http://ex.org/video")
+        webvtt = form.getvalue("textinput") or "WEBVTT\n"
+        base = "http://ex.org/metadata.vtt"
+    oformat = form.getvalue("format", "jsonld")
+    flat = (form.getvalue("type", "flat") == "flat")
+    forcetxt = (form.getvalue("forcetxt") is not None)
+
+    parsed = parse(webvtt)
+    jsonld = webvtt2jsonld(parsed, base, video, contexts, flat)
+
+    if oformat == "jsonld":
+        from json import dumps
+        output = dumps(jsonld, indent=4)
+    else: # format is nquads
+        from pyld.jsonld import JsonLdProcessor 
+        proc = JsonLdProcessor()
+        output = proc.to_nquads(proc.to_rdf(jsonld, None))
+
+    output = output.encode("utf-8")
+                         
+    status = '200 OK'
+    response_headers = [
+        ('Content-type', get_ctype(oformat, flat, forcetxt)),
+        ('Content-length',str(len(output))),
+    ]
+    # include CORS headers to allow other servers in invoke this form
+    origin = environ.get("HTTP_ORIGIN")
+    if origin:
+        response_headers.append(("access-control-allow-origin",
+                                 origin))
+        response_headers.append(("access-control-allow-methods",
+                                    "GET, HEAD, PUT, POST, DELETE"))
+        acrh = environ.get("HTTP_ACCESS_CONTROL_REQUEST_HEADERS")
+        if acrh:
+            response_headers.append(("access-control-allow-headers",
+                                    acrh))
+
+    start_response(status, response_headers)
+    yield output
+
+# TODO: make application serve index.html (as /) and process (as /process)
+if __name__ == "__main__":
+    from wsgiref.simple_server import make_server
+    HOST = "localhost"
+    PORT = 12345
+    HTTPD = make_server(HOST, PORT, application)
+    print "Listening on http://%s:%s/" % (HOST, PORT)
+    HTTPD.serve_forever()

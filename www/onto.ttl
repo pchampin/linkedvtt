@@ -1,0 +1,61 @@
+# linked-data expression of Web-VTT
+@prefix vtt: <http://champin.net/2014/linkedvtt/onto#>.
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
+@prefix ma:   <http://www.w3.org/ns/ma-ont#>.
+
+
+vtt:VideoAnnotationDataset a rdfs:Class.
+
+vtt:Cue a rdfs:Class.
+
+
+vtt:hasCue a rdf:Property ;
+    rdfs:domain vtt:VideoAnnotationDataset ;
+    rdfs:range vtt:Cue ;
+.
+
+vtt:describesFragment a rdf:Property ;
+    rdfs:domain vtt:Cue ;
+    rdfs:range ma:MediaFragment ;
+.
+
+vtt:annotedBy a rdf:Property ;
+    rdfs:domain ma:MediaFragment ;
+.
+
+
+# terms defined by the WebVTT specification
+
+vtt:regionMetadata a rdf:Property ;
+    rdfs:domain vtt:VideoAnnotationDataset ;
+.
+
+vtt:vertical a rdf:Property ;
+    rdfs:domain vtt:Cue ;
+.
+
+vtt:line a rdf:Property ;
+    rdfs:domain vtt:Cue ;
+.
+
+vtt:size a rdf:Property ;
+    rdfs:domain vtt:Cue ;
+.
+
+vtt:position a rdf:Property ;
+    rdfs:domain vtt:Cue ;
+.
+
+vtt:align a rdf:Property ;
+    rdfs:domain vtt:Cue ;
+.
+
+vtt:region a rdf:Property ;
+    rdfs:domain vtt:Cue ;
+.
+
+# TODO any other metadata or setting defined un WebVTT?
+# ... Should define sub-settings (e.g. region definition?) 
+

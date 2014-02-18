@@ -1,0 +1,259 @@
+#!/usr/bin/env python
+#    EasyPub: easy publication of RDF vocabulary
+#    Copyright (C) 2009 Pierre-Antoine Champin <pchampin@liris.cnrs.fr>
+#
+#    EasyPub is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Lesser General Public License as published
+#    by the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    KTBS is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public License
+#    along with KTBS.  If not, see <http://www.gnu.org/licenses/>.
+"""
+This is a drop-in CGI/WSGI script for publishing RDF vocabulary.
+
+Quick start
+===========
+
+Assuming you want to publish the vocabulary http://example.com/mydir/myvoc, the
+recipe with the most chances to work is the following:
+
+1. In the directory corresponding to http://example.com/mydic, copy the script
+   and name it `myvoc` (without any extension).
+2. Make `myvoc` executable (not required for WSGI, see below).
+4. In the same directory, put two files named 'index.html' and 'index.rdf'
+
+At this point, it may work (if you are lucky), or may have to tell your HTTP
+server that `myvoc` is a CGI script (or a WSGI application, if supported).
+
+In apache, this is done by creating (if not present) a `.htaccess` file in the
+same directory as the `myvoc` script, and adding the following line::
+  <Files myvoc>
+    SetHandler cgi-script
+  </Files>
+
+(or `wsgi-script` instead of `cgi-script`)
+
+Fortunately, this option is allowed to end-users by most webmasters.
+
+
+Alternative recipe
+==================
+
+This is the original recipe that I proposed. It requires a shorter
+configuration file (in apache, at least), but does not allow "slash-based"
+vocabulary.
+
+1. Make `myvoc` a directory at a place where your HTTP server will serve it at
+   the desired URI.
+2. Copy the script in this directory as 'index.cgi' (or 'index.wsgi' if your
+   server as WSGI support).
+3. Make `index.cgi` executable (not required for WSGI scripts).
+4. In the same directory, put two files named 'index.html' and 'index.rdf'
+
+At this point, it may work (if you are lucky), or may have to tell your HTTP
+server that the directory index (i.e. the file to serve for the bare directory)
+is index.wsgi.
+
+In apache, this is done by creating (if not present) a `.htaccess` file in the
+`myvoc` diractory, and adding the following line::
+    DirectoryIndex index.cgi
+(or `index.wsgi`, accordingly)
+
+Fortunately, this option is allowed to end-users by most webmasters.
+
+More generaly
+=============
+
+The script will redirect, according to the Accept HTTP header, to a file with
+the same name but a different extension. It drops from the redirection any path element passed after the script name, so in the first recipe above, http://example.com/mydir/myvoc/Class1 would redirect to http://example.com/mydir/myvoc.html (or .rdf, depending).
+
+The script can be configured to serve different files or support other mime
+types by altering the `MAPPING` constant below.
+"""
+from urlparse import urljoin
+
+# the list below maps mime-types to redirection URL; %s is to be replaced by
+# the script name (without its extension); note that the order may be
+# significant (when matching */*)
+MAPPING = [
+    ("text/html", "%s.html"),
+    ("application/rdf+xml", "%s.rdf"),
+    ## uncomment the following if applicable
+    ("application/turtle", "%s.ttl"),
+    #("text/n3", "%s.n3"),
+]
+
+HTML_REDIRECT = """<html>
+<head><title>Non-Information Resource</title></head>
+<body>
+<h1>Non-Information Resource</h1>
+You should be redirected to <a href="%s">%s</a>.
+</body>
+</html>"""
+
+HTML_NOT_ACCEPTABLE = """<html>
+<head><title>No acceptable representation</title></head>
+<body>
+<h1>No acceptable representation</h1>
+This server has no representation of the required resource that is acceptable
+by your web agent. Available representations are:<ul>
+%s
+</ul>
+</body>
+</html>"""
+
+HTML_REPRESENTATION = \
+    """<li><a href="%(location)s">%(location)s</a> (%(mimetype)s)</li>\n"""
+
+def application(env, start_response):
+    """
+    Find the most appropriate redirection, and issues an HTTP response
+    accordingly.
+    """
+    redirection = find_redirection(env.get("HTTP_ACCEPT"))
+    if redirection is None:
+        # TODO should check that HTML is acceptable...
+        representations = ""
+        for mimetype, location in MAPPING:
+            representations += HTML_REPRESENTATION % locals()
+        msg = HTML_NOT_ACCEPTABLE % representations
+        start_response("406 No Acceptable Representation", [
+            ("content-type", "text/html;encoding=ascii"),
+            ("content-size", str(len(msg))),
+        ])
+        yield msg
+    else:
+        script_name = env["SCRIPT_NAME"]
+        if "." in script_name:
+            script_name, _ = script_name.rsplit(".",1)
+        if "%s" in redirection:
+            redirection %= script_name
+        absolute_redirection = urljoin(rebuild_url(env), redirection)
+        msg = HTML_REDIRECT % (redirection, redirection)
+        start_response("303 Non-Information Resource", [
+            ("content-type", "text/html;encoding=ascii"),
+            ("content-size", str(len(msg))),
+            ("location", absolute_redirection),
+        ])
+        yield msg
+
+def find_redirection(http_accept):
+    """
+    Compare the HTTP Accept header field with the available mapping.
+    """
+    if http_accept is None:
+        http_accept = "*/*"
+    accept_list = sort_accept(http_accept)
+    for accepted in accept_list:
+        # FIXME: we currently ignore mimetype parameters for matching:
+        accepted = accepted[0]
+        for mimetype, redirection in MAPPING:
+            if mime_match(accepted, mimetype):
+                return redirection
+    return None # failed
+
+
+def sort_accept(accept_str):
+    """
+    Transform a string complying with the HTTP Accept syntax into a sorted
+    list of mimetype (possibly with parameters).
+    """
+    # build list of accepted mimetype
+    lst1 = split_n_strip(accept_str, ",")
+    # split params in each accepted mimetype
+    lst2 = [ split_n_strip(item, ";") for item in lst1 ]
+    # split each param as [name, value]
+    lst3 = [ [item[0]] + [ split_n_strip(param, "=") for param in item[1:] ]
+             for item in lst2 ]
+    # insert priority marker in each accepted mimetype
+    lst_prio = [ compile_priority(item) for item in lst3 ]
+    lst_prio.sort(reverse=True)
+    # strip priority tuples before returning
+    ret = [ item[1:] for item in lst_prio ]
+    return ret
+
+def split_n_strip(astr, sep):
+    """
+    Split astr according to sep, and strip each element. 
+    """
+    return [ item.strip() for item in astr.split(sep) ]
+
+def compile_priority(lst):
+    """
+    Takes a list of the form [ mimetype, parameters* ] and return a copy
+    with a tuple (q, p) inserted at the start where q is the value of the 'q'
+    parameter, and 'p' represents the "specificity" of the mime type.
+
+    The goal is that those tuples allow to sort different lst with the standard
+    sort function (decreasing ordet for decreasing priority).
+
+    Note also that this function removes from the return value the 'q'
+    parameter if present.
+    """
+    ret = list(lst)
+    last = ret[-1]
+    if len(ret) > 1 and last[0] == "q":
+        del ret[-1]
+        q = float(last[1])
+    else:
+        q = 1.0
+    mime = ret[0]
+    if mime == "*/*":
+        p = 1
+    elif mime.endswith("/*"):
+        p = 2
+    elif len(ret) == 1:
+        p = 3
+    else:
+        p = 4
+    ret.insert(0, (q, p))
+    return ret
+
+def mime_match(m1, m2):
+    """
+    Return True if mimetype m1 matches mimetype m2, where m1 can contain
+    wildcards.
+    """
+    if m1 == m2:
+        return True
+    elif m1 == "*/*":
+        return True
+    elif m1[-2:] == "/*":
+        return m2.startswith(m1[:-1])
+    return False
+
+def rebuild_url(env):
+    """
+    Rebuilds the URL from a WSGI environment.
+
+    It keeps the port number implicit if it recognizes it as the default port.
+    """
+    template = "%(scheme)s://%(host)s%(port)s%(path)s%(query)s"
+    scheme = env["wsgi.url_scheme"]
+    host = env["SERVER_NAME"]
+    port = env["SERVER_PORT"]
+    path = env["SCRIPT_NAME"]
+    query = env.get("QUERY_STRING", "")
+
+    DEFAULT_PORTS = [ ("http", "80"), ("https", "443"), ]
+    if (scheme, port) in DEFAULT_PORTS:
+        port = ""
+    else:
+        port  = ":" + port
+    if path == "":
+        path = "/"
+    if query:
+        query = "?" + query
+
+    return template % locals()
+
+if __name__ == "__main__":
+    from wsgiref.handlers import CGIHandler
+    h = CGIHandler()
+    h.run(application)
