@@ -1,6 +1,6 @@
 
 <!-- Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp -->
-<!--     using base file:///home/pa/dev/rdflib-webvtt/www/onto.ttl-->
+<!--     using base file:///home/pa/dev/linkedvtt/www/onto.ttl-->
 
 
 <rdf:RDF xmlns="http://www.w3.org/2000/01/rdf-schema#"
@@ -8,50 +8,80 @@
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
 
     <Class rdf:about="http://champin.net/2014/linkedvtt/onto#Cue">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+        <comment xml:lang="en">Instances of this class are Cues as defined by the Web-VTT specification. Cues with an identifier have an IRI based on that identifier, while cues without any identifiers are represented by blank nodes.</comment>
+        <label xml:lang="en">Cue</label>
     </Class>
 
     <Class rdf:about="http://champin.net/2014/linkedvtt/onto#VideoAnnotationDataset">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+        <comment xml:lang="en">Instances of that class are RDF datasets representing the information conveyed by Web-VTT files.</comment>
+        <label xml:lang="en">Video Annotation Dataset</label>
     </Class>
 
     <rdf:Property rdf:about="http://champin.net/2014/linkedvtt/onto#align">
+        <describedBy rdf:resource="http://dev.w3.org/html5/webvtt/#dfn-webvtt-alignment-cue-setting"/>
         <domain rdf:resource="http://champin.net/2014/linkedvtt/onto#Cue"/>
+        <label xml:lang="en">align</label>
     </rdf:Property>
 
     <rdf:Property rdf:about="http://champin.net/2014/linkedvtt/onto#annotedBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+        <comment xml:lang="en">This property links a Media fragment to the payload of a cue describing it</comment>
         <domain rdf:resource="http://www.w3.org/ns/ma-ont#MediaFragment"/>
+        <label xml:lang="en">annotated by</label>
+        <range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </rdf:Property>
 
     <rdf:Property rdf:about="http://champin.net/2014/linkedvtt/onto#describesFragment">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <comment xml:lang="en">This property links an instance of cue to the media fragment it describes.</comment>
         <domain rdf:resource="http://champin.net/2014/linkedvtt/onto#Cue"/>
+        <label xml:lang="en">describes Fragment</label>
         <range rdf:resource="http://www.w3.org/ns/ma-ont#MediaFragment"/>
     </rdf:Property>
 
     <rdf:Property rdf:about="http://champin.net/2014/linkedvtt/onto#hasCue">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <comment xml:lang="en">This property links a video annotation dataset to all the cues it defines.</comment>
         <domain rdf:resource="http://champin.net/2014/linkedvtt/onto#VideoAnnotationDataset"/>
+        <label xml:lang="en">has Cue</label>
         <range rdf:resource="http://champin.net/2014/linkedvtt/onto#Cue"/>
     </rdf:Property>
 
     <rdf:Property rdf:about="http://champin.net/2014/linkedvtt/onto#line">
+        <describedBy rdf:resource="http://dev.w3.org/html5/webvtt/#dfn-webvtt-line-position-cue-setting"/>
         <domain rdf:resource="http://champin.net/2014/linkedvtt/onto#Cue"/>
+        <label xml:lang="en">line position</label>
     </rdf:Property>
 
     <rdf:Property rdf:about="http://champin.net/2014/linkedvtt/onto#position">
+        <describedBy rdf:resource="http://dev.w3.org/html5/webvtt/#dfn-webvtt-text-position-cue-setting"/>
         <domain rdf:resource="http://champin.net/2014/linkedvtt/onto#Cue"/>
+        <label xml:lang="en">text position</label>
     </rdf:Property>
 
     <rdf:Property rdf:about="http://champin.net/2014/linkedvtt/onto#region">
+        <describedBy rdf:resource="http://dev.w3.org/html5/webvtt/#dfn-webvtt-region-cue-setting"/>
         <domain rdf:resource="http://champin.net/2014/linkedvtt/onto#Cue"/>
+        <label xml:lang="en">region</label>
     </rdf:Property>
 
     <rdf:Property rdf:about="http://champin.net/2014/linkedvtt/onto#regionMetadata">
+        <describedBy rdf:resource="http://dev.w3.org/html5/webvtt/#dfn-webvtt-region-metadata-header"/>
         <domain rdf:resource="http://champin.net/2014/linkedvtt/onto#VideoAnnotationDataset"/>
+        <label xml:lang="en">region</label>
     </rdf:Property>
 
     <rdf:Property rdf:about="http://champin.net/2014/linkedvtt/onto#size">
+        <describedBy rdf:resource="http://dev.w3.org/html5/webvtt/#dfn-webvtt-size-cue-setting"/>
         <domain rdf:resource="http://champin.net/2014/linkedvtt/onto#Cue"/>
+        <label xml:lang="en">size</label>
     </rdf:Property>
 
     <rdf:Property rdf:about="http://champin.net/2014/linkedvtt/onto#vertical">
+        <describedBy rdf:resource="http://dev.w3.org/html5/webvtt/#dfn-webvtt-vertical-text-cue-setting"/>
         <domain rdf:resource="http://champin.net/2014/linkedvtt/onto#Cue"/>
+        <label xml:lang="en">vertical text</label>
     </rdf:Property>
 </rdf:RDF>

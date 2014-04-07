@@ -3,26 +3,40 @@
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
 @prefix ma:   <http://www.w3.org/ns/ma-ont#>.
 
 
-vtt:VideoAnnotationDataset a rdfs:Class.
+vtt:VideoAnnotationDataset a rdfs:Class, owl:Class ;
+    rdfs:label "Video Annotation Dataset"@en ;
+    rdfs:comment "Instances of that class are RDF datasets representing the information conveyed by Web-VTT files."@en ;
+.
 
-vtt:Cue a rdfs:Class.
+vtt:Cue a rdfs:Class, owl:Class ;
+    rdfs:label "Cue"@en ;
+    rdfs:comment "Instances of this class are Cues as defined by the Web-VTT specification. Cues with an identifier have an IRI based on that identifier, while cues without any identifiers are represented by blank nodes."@en ;
+.
 
 
-vtt:hasCue a rdf:Property ;
+vtt:hasCue a rdf:Property, owl:ObjectProperty ;
     rdfs:domain vtt:VideoAnnotationDataset ;
     rdfs:range vtt:Cue ;
+    rdfs:label "has Cue"@en ;
+    rdfs:comment "This property links a video annotation dataset to all the cues it defines."@en ;
 .
 
-vtt:describesFragment a rdf:Property ;
+vtt:describesFragment a rdf:Property, owl:ObjectProperty ;
     rdfs:domain vtt:Cue ;
     rdfs:range ma:MediaFragment ;
+    rdfs:label "describes Fragment"@en ;
+    rdfs:comment "This property links an instance of cue to the media fragment it describes."@en ;
 .
 
-vtt:annotedBy a rdf:Property ;
+vtt:annotedBy a rdf:Property, owl:DatatypeProperty ;
     rdfs:domain ma:MediaFragment ;
+    rdfs:range xsd:string ;
+    rdfs:label "annotated by"@en ;
+    rdfs:comment "This property links a Media fragment to the payload of a cue describing it"@en ;
 .
 
 
@@ -30,30 +44,44 @@ vtt:annotedBy a rdf:Property ;
 
 vtt:regionMetadata a rdf:Property ;
     rdfs:domain vtt:VideoAnnotationDataset ;
+    rdfs:label "region"@en ;
+    rdfs:describedBy <http://dev.w3.org/html5/webvtt/#dfn-webvtt-region-metadata-header> ;
 .
 
 vtt:vertical a rdf:Property ;
     rdfs:domain vtt:Cue ;
+    rdfs:label "vertical text"@en ;
+    rdfs:describedBy <http://dev.w3.org/html5/webvtt/#dfn-webvtt-vertical-text-cue-setting> ;
 .
 
 vtt:line a rdf:Property ;
     rdfs:domain vtt:Cue ;
+    rdfs:label "line position"@en ;
+    rdfs:describedBy <http://dev.w3.org/html5/webvtt/#dfn-webvtt-line-position-cue-setting> ;
 .
 
 vtt:size a rdf:Property ;
     rdfs:domain vtt:Cue ;
+    rdfs:label "size"@en ;
+    rdfs:describedBy <http://dev.w3.org/html5/webvtt/#dfn-webvtt-size-cue-setting> ;
 .
 
 vtt:position a rdf:Property ;
     rdfs:domain vtt:Cue ;
+    rdfs:label "text position"@en ;
+    rdfs:describedBy <http://dev.w3.org/html5/webvtt/#dfn-webvtt-text-position-cue-setting> ;
 .
 
 vtt:align a rdf:Property ;
     rdfs:domain vtt:Cue ;
+    rdfs:label "align"@en ;
+    rdfs:describedBy <http://dev.w3.org/html5/webvtt/#dfn-webvtt-alignment-cue-setting> ;
 .
 
 vtt:region a rdf:Property ;
     rdfs:domain vtt:Cue ;
+    rdfs:label "region"@en ;
+    rdfs:describedBy <http://dev.w3.org/html5/webvtt/#dfn-webvtt-region-cue-setting> ;
 .
 
 # TODO any other metadata or setting defined un WebVTT?
